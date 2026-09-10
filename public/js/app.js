@@ -9,6 +9,14 @@ const App = {
     wireTabs('#collector-tabs');
     wireTabs('#admin-tabs');
 
+    // quick role cards on the login screen prefill the username
+    $$('.role-card').forEach((b) => {
+      b.addEventListener('click', () => {
+        $('#login-username').value = b.dataset.fill;
+        $('#login-password').focus();
+      });
+    });
+
     const start = async () => {
       if (API.session) {
         try {
@@ -87,6 +95,8 @@ const App = {
     } else {
       $('#view-admin').classList.add('hidden');
       $('#view-collector').classList.remove('hidden');
+      const cTitle = $('#c-title');
+      if (cTitle) cTitle.textContent = (session.username || 'Bursar') + ' Fees Collection Hub';
       if (!Collector.ready) { Collector.ready = true; Collector.init(); }
     }
     Sync.poll();
