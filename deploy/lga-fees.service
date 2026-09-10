@@ -1,0 +1,17 @@
+[Unit]
+Description=Lord's Great Academy Fees Collection System
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=fees
+WorkingDirectory=/opt/lga-fees
+ExecStart=/usr/bin/env node server/index.js
+Restart=always
+RestartSec=5
+Environment=NODE_ENV=production
+Environment=PORT={{PORT}}
+
+[Install]
+WantedBy=multi-user.target

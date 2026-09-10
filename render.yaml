@@ -1,0 +1,19 @@
+# Render Blueprint — deploys the app with a persistent disk for the database.
+# Usage: on render.com → New → Blueprint → point at this repo (or "Render from file"),
+# or:  render.yaml is picked up automatically when you connect the repo.
+#
+# NOTE: The free plan has no persistent disk and spins down after inactivity.
+# For a school that must keep its data, use at least the "starter" plan
+# (with the 1 GB disk below) — data survives restarts and redeploys.
+
+services:
+  - type: web
+    name: lga-fees
+    runtime: docker
+    plan: starter
+    healthCheckPath: /api/health
+    autoDeploy: true
+    disk:
+      name: fees-data
+      mountPath: /app/data
+      sizeGB: 1

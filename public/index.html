@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lord's Great Academy — Fees Collection</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 3 56 11v20c0 15-10 26-24 30C18 57 8 46 8 31V11Z' fill='%230f3d2e' stroke='%23c9a227' stroke-width='2.5'/%3E%3Cpath d='M18 26c6-3 10-3 14 0 4-3 8-3 14 0v16c-6-3-10-3-14 0-4-3-8-3-14 0Z' fill='%23fff'/%3E%3Cpath d='M32 26v16' stroke='%230f3d2e' stroke-width='1.6'/%3E%3Ccircle cx='32' cy='14' r='3.4' fill='%23c9a227'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<header id="topbar" class="topbar hidden">
+  <div class="brand">
+    <svg class="crest" viewBox="0 0 64 64" aria-hidden="true">
+      <path d="M32 3 56 11v20c0 15-10 26-24 30C18 57 8 46 8 31V11Z" fill="#0f3d2e" stroke="#c9a227" stroke-width="2.5"/>
+      <path d="M18 26c6-3 10-3 14 0 4-3 8-3 14 0v16c-6-3-10-3-14 0-4-3-8-3-14 0Z" fill="#fff"/>
+      <path d="M32 26v16" stroke="#0f3d2e" stroke-width="1.6"/>
+      <circle cx="32" cy="14" r="3.4" fill="#c9a227"/>
+    </svg>
+    <div class="brand-text">
+      <strong>LORD'S GREAT ACADEMY</strong>
+      <span>Fees Collection System</span>
+    </div>
+  </div>
+  <div class="top-right">
+    <span id="sync-pill" class="sync-pill" title="Cross-device sync">
+      <span class="dot"></span><span id="sync-label">Syncing…</span>
+    </span>
+    <span id="user-chip" class="user-chip"></span>
+    <button id="logout-btn" class="btn btn-ghost btn-sm" type="button">Sign out</button>
+  </div>
+</header>
+
+<main>
+  <!-- ================= LOGIN ================= -->
+  <section id="view-login" class="view login-wrap">
+    <div class="login-card">
+      <svg class="crest crest-lg" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M32 3 56 11v20c0 15-10 26-24 30C18 57 8 46 8 31V11Z" fill="#0f3d2e" stroke="#c9a227" stroke-width="2.5"/>
+        <path d="M18 26c6-3 10-3 14 0 4-3 8-3 14 0v16c-6-3-10-3-14 0-4-3-8-3-14 0Z" fill="#fff"/>
+        <path d="M32 26v16" stroke="#0f3d2e" stroke-width="1.6"/>
+        <circle cx="32" cy="14" r="3.4" fill="#c9a227"/>
+      </svg>
+      <h1>LORD'S GREAT ACADEMY</h1>
+      <p class="muted">Fees Collection System</p>
+      <form id="login-form" autocomplete="on">
+        <label>Username
+          <input id="login-username" autocomplete="username" placeholder="Enter username" required>
+        </label>
+        <label>Password
+          <input id="login-password" type="password" autocomplete="current-password" placeholder="Enter password" required>
+        </label>
+        <button class="btn btn-primary btn-block btn-lg" type="submit">Sign In</button>
+        <p id="login-error" class="form-error hidden"></p>
+      </form>
+      <p class="login-hint muted">Two dashboards: <b>Collector (Bursar)</b> &nbsp;•&nbsp; <b>Administrator</b></p>
+    </div>
+  </section>
+
+  <!-- ================= COLLECTOR ================= -->
+  <section id="view-collector" class="view hidden">
+    <nav class="tabs" id="collector-tabs">
+      <button class="tab active" type="button" data-pane="c-entry">＋ New Entry</button>
+      <button class="tab" type="button" data-pane="c-batch">📋 Class List Entry</button>
+      <button class="tab" type="button" data-pane="c-learners">🎓 Learners</button>
+      <button class="tab" type="button" data-pane="c-submitted">📤 Submitted Entries <span id="c-submitted-count" class="badge hidden"></span></button>
+    </nav>
+
+    <!-- New entry -->
+    <div id="pane-c-entry" class="pane">
+      <div id="editing-banner" class="banner hidden"></div>
+      <div class="card" id="entry-form-card">
+        <h2>Fees Collection Form</h2>
+        <p class="muted small">Name of school: <b>THE LORD'S GREAT ACADEMY</b> — fill in the details below, then press <b>Submit to Administrator</b>.</p>
+        <div class="grid grid-2">
+          <label>Department
+            <select id="f-department"><option value="">— Select —</option></select>
+          </label>
+          <label>Class
+            <select id="f-class"><option value="">— Select —</option></select>
+          </label>
+          <div class="cell span-2">
+            <label class="lbl-row">Name of Learner
+              <span id="learner-reg-note" class="hint ok hidden">✓ registered learner</span>
+            </label>
+            <input id="f-learner" list="learner-datalist" placeholder="Type learner name — new names are registered automatically" autocomplete="off">
+            <datalist id="learner-datalist"></datalist>
+          </div>
+          <label>Date of Payment
+            <input id="f-date" type="date">
+          </label>
+          <div class="cell">
+            <span class="lbl-row">Payment Type</span>
+            <div class="seg">
+              <input type="radio" name="paytype" id="pt-full" value="FULL" checked><label for="pt-full">Full Payment</label>
+              <input type="radio" name="paytype" id="pt-part" value="PART"><label for="pt-part">Part Payment</label>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="section-title">Fees <span class="muted small">(GH¢)</span></h3>
+        <div id="fee-grid" class="fee-grid"></div>
+        <div class="total-row"><span>TOTAL AMOUNT</span><span id="f-total" class="total-value">GH¢ 0.00</span></div>
+
+        <h3 class="section-title">Batch Learner Upload</h3>
+        <div class="row wrap">
+          <button type="button" class="btn" id="f-photo-btn">📷 Take Photo</button>
+          <button type="button" class="btn" id="f-file-btn">📁 Upload File</button>
+          <input type="file" id="f-file-input" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.csv" class="hidden">
+          <span id="f-media-note" class="hint"></span>
+          <button type="button" class="btn btn-sm hidden" id="f-media-clear" title="Clear photo / file">✕</button>
+        </div>
+        <div id="f-photo-preview" class="preview hidden"></div>
+
+        <label class="block-label">Notes (optional)
+          <input id="f-notes" placeholder="e.g. balance to be paid next week">
+        </label>
+
+        <button type="button" id="f-submit" class="btn btn-primary btn-lg btn-block">Submit to Administrator</button>
+      </div>
+
+      <div id="entry-success" class="card hidden">
+        <h2>✅ Entry Submitted</h2>
+        <p id="success-msg" class="muted"></p>
+        <div class="row wrap">
+          <button id="success-receipt" class="btn btn-primary">⬇ Download PDF Receipt</button>
+          <button id="success-another" class="btn">＋ Add Another Entry</button>
+          <button id="success-view" class="btn">View Submitted Entries</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Class list (batch) entry -->
+    <div id="pane-c-batch" class="pane hidden">
+      <div class="card">
+        <h2>Class List Entry <span class="muted small">— enter fees for the whole class together</span></h2>
+        <div class="grid grid-3">
+          <label>Department
+            <select id="b-department"><option value="">— Select —</option></select>
+          </label>
+          <label>Class
+            <select id="b-class"><option value="">— Select —</option></select>
+          </label>
+          <label>Date of Payment
+            <input id="b-date" type="date">
+          </label>
+        </div>
+        <div class="row wrap">
+          <div class="seg inline">
+            <input type="radio" name="bpaytype" id="bpt-full" value="FULL" checked><label for="bpt-full">Full Payment</label>
+            <input type="radio" name="bpaytype" id="bpt-part" value="PART"><label for="bpt-part">Part Payment</label>
+          </div>
+          <button id="b-load" class="btn btn-primary" type="button">Load Class List</button>
+          <span id="b-load-note" class="hint"></span>
+        </div>
+        <div class="row wrap">
+          <input id="b-new-learner" placeholder="Add another learner name…">
+          <button id="b-add-learner" class="btn" type="button">＋ Add Learner</button>
+        </div>
+      </div>
+
+      <div class="card hidden" id="b-table-card">
+        <div class="rate-bar">
+          <h3 class="section-title">Class Fee Rates <span class="muted small">— standard fees for this class, fill once</span></h3>
+          <div id="b-rate-grid" class="fee-grid"></div>
+          <div class="row">
+            <button id="b-apply-rates" class="btn" type="button">Apply Rates to All Rows</button>
+            <span class="hint">Applies the rates to every learner row (empty rates are skipped).</span>
+          </div>
+        </div>
+        <div class="table-wrap wide">
+          <table id="b-table" class="data-table">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="total-row"><span>CLASS TOTAL</span><span id="b-total" class="total-value">GH¢ 0.00</span></div>
+        <h3 class="section-title">Batch Learner Upload</h3>
+        <div class="row wrap">
+          <button id="b-photo-btn" class="btn" type="button">📷 Take Photo</button>
+          <button id="b-file-btn" class="btn" type="button">📁 Upload File</button>
+          <input type="file" id="b-file-input" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.csv" class="hidden">
+          <span id="b-media-note" class="hint"></span>
+          <button type="button" class="btn btn-sm hidden" id="b-media-clear" title="Clear photo / file">✕</button>
+        </div>
+        <div id="b-photo-preview" class="preview hidden"></div>
+        <button id="b-submit" class="btn btn-primary btn-lg btn-block" type="button" disabled>Submit Whole Class</button>
+      </div>
+
+      <div id="batch-success" class="card hidden">
+        <h2>✅ Class Submitted</h2>
+        <p id="batch-success-msg" class="muted"></p>
+        <div class="row wrap">
+          <button id="batch-export" class="btn btn-primary" type="button">⬇ Export PDF of This Batch</button>
+          <button id="batch-new" class="btn" type="button">＋ Enter Another Class</button>
+          <button id="batch-view" class="btn" type="button">View Submitted Entries</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Learners -->
+    <div id="pane-c-learners" class="pane hidden">
+      <div class="card">
+        <h2>Register Learner</h2>
+        <div class="grid grid-3">
+          <label>Name <input id="l-name" placeholder="FULL NAME"></label>
+          <label>Department
+            <select id="l-department"><option value="">— Select —</option></select>
+          </label>
+          <label>Class
+            <select id="l-class"><option value="">— Select —</option></select>
+          </label>
+        </div>
+        <div class="row wrap">
+          <button id="l-add" class="btn btn-primary" type="button">＋ Register Learner</button>
+          <span class="divider"></span>
+          <button id="l-csv-btn" class="btn" type="button">📄 Bulk Upload (CSV)</button>
+          <input type="file" id="l-csv-input" accept=".csv,.txt" class="hidden">
+          <span class="hint">CSV columns: <code>Name, Department, Class</code> (Department/Class optional)</span>
+        </div>
+        <div class="row wrap" style="margin-top:10px">
+          <input id="l-search" placeholder="Search learners…">
+          <span id="l-count" class="hint"></span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table class="data-table" id="l-table">
+            <thead><tr><th>Name</th><th>Department</th><th>Class</th><th>Registered</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p id="l-empty" class="empty hidden">No learners registered yet. Register one above, or names are registered automatically when you submit fee entries.</p>
+      </div>
+    </div>
+
+    <!-- Submitted entries -->
+    <div id="pane-c-submitted" class="pane hidden">
+      <div class="card">
+        <div class="row between wrap">
+          <h2>Submitted Entries</h2>
+          <button id="c-export-pdf" class="btn btn-primary" type="button">⬇ Export PDF</button>
+        </div>
+        <div class="grid grid-4">
+          <input id="s-q" placeholder="Search learner…">
+          <select id="s-dept"><option value="">All Departments</option></select>
+          <select id="s-class"><option value="">All Classes</option></select>
+          <div class="row"><input id="s-from" type="date" title="From date"><input id="s-to" type="date" title="To date"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap wide">
+          <table class="data-table" id="s-table">
+            <thead><tr><th>#</th><th>Date</th><th>Dept</th><th>Class</th><th>Learner</th><th>Type</th><th>Total</th><th>Batch</th><th>Actions</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p id="s-empty" class="empty hidden">No entries submitted yet. Use “New Entry” or “Class List Entry”.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ADMINISTRATOR ================= -->
+  <section id="view-admin" class="view hidden">
+    <nav class="tabs" id="admin-tabs">
+      <button class="tab active" type="button" data-pane="a-overview">📊 Overview</button>
+      <button class="tab" type="button" data-pane="a-entries">📤 Submitted Entries <span id="a-entries-count" class="badge hidden"></span></button>
+      <button class="tab" type="button" data-pane="a-export">⬇ Export</button>
+      <button class="tab" type="button" data-pane="a-users">👥 Login Manager</button>
+    </nav>
+
+    <div id="pane-a-overview" class="pane">
+      <div class="stat-grid" id="a-stats"></div>
+      <div class="grid grid-2">
+        <div class="card"><h2>Collected by Department</h2><div id="a-dept-bars"></div></div>
+        <div class="card"><h2>By Fee Category</h2><div id="a-fee-bars"></div></div>
+      </div>
+    </div>
+
+    <div id="pane-a-entries" class="pane hidden">
+      <div class="card">
+        <div class="row between wrap">
+          <h2>Submitted Entries</h2>
+          <span class="hint">Live across all devices — new collector submissions appear here automatically.</span>
+        </div>
+        <div class="grid grid-4">
+          <input id="a-q" placeholder="Search learner…">
+          <select id="a-dept"><option value="">All Departments</option></select>
+          <select id="a-class"><option value="">All Classes</option></select>
+          <div class="row"><input id="a-from" type="date" title="From date"><input id="a-to" type="date" title="To date"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap wide">
+          <table class="data-table" id="a-table">
+            <thead><tr><th>#</th><th>Date</th><th>Dept</th><th>Class</th><th>Learner</th><th>Type</th><th>Total</th><th>By</th><th>Actions</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p id="a-empty" class="empty hidden">Nothing submitted yet. When the collector submits entries from any device, they appear here automatically.</p>
+      </div>
+    </div>
+
+    <div id="pane-a-export" class="pane hidden">
+      <div class="card">
+        <h2>Export Reports</h2>
+        <p class="muted small">Choose a scope, then download. <b>PDF</b> is ideal for printing and sharing; <b>DOCX</b> opens in Microsoft Word for further editing. Exports always include every submitted entry within the selected scope.</p>
+        <div class="grid grid-4">
+          <label>Department <select id="e-dept"><option value="">All</option></select></label>
+          <label>Class <select id="e-class"><option value="">All</option></select></label>
+          <label>From <input id="e-from" type="date"></label>
+          <label>To <input id="e-to" type="date"></label>
+        </div>
+        <div class="row wrap">
+          <button id="e-pdf" class="btn btn-primary" type="button">⬇ Export as PDF</button>
+          <button id="e-docx" class="btn btn-primary" type="button">⬇ Export as DOCX (Word)</button>
+          <span class="divider"></span>
+          <button id="e-backup" class="btn" type="button">🗄 Download Database Backup</button>
+          <button id="e-restore" class="btn" type="button">⬆ Restore from Backup</button>
+          <input type="file" id="e-restore-input" accept=".db,.sqlite,.sqlite3" class="hidden">
+        </div>
+        <p id="e-status" class="hint"></p>
+      </div>
+    </div>
+
+    <div id="pane-a-users" class="pane hidden">
+      <div class="card">
+        <h2>👥 Login Manager</h2>
+        <p class="muted small">Create new Collector (bursar) accounts, or change any account's username, password, role or status. Changes apply immediately — disabled accounts cannot sign in.</p>
+        <div class="grid grid-3">
+          <label>Username
+            <input id="u-new-username" placeholder="e.g. bursar2" autocomplete="off">
+          </label>
+          <label>Full name
+            <input id="u-new-name" placeholder="e.g. Kofi Asare">
+          </label>
+          <label>Password
+            <input id="u-new-password" type="password" placeholder="at least 6 characters">
+          </label>
+        </div>
+        <div class="row wrap">
+          <span class="lbl-inline">Role
+            <select id="u-new-role" style="width:auto;min-width:180px">
+              <option value="collector">Collector (Bursar)</option>
+              <option value="admin">Administrator</option>
+            </select>
+          </span>
+          <button id="u-add" class="btn btn-primary" type="button">＋ Create Login</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Accounts</h2>
+        <div class="table-wrap">
+          <table class="data-table" id="u-table">
+            <thead><tr><th>Username</th><th>Full name</th><th>Role</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Change my own login</h2>
+        <p class="muted small">Signed in as <b id="me-who"></b>. Leave a field blank to keep the current value.</p>
+        <div class="grid grid-2">
+          <label>New username
+            <input id="me-username" placeholder="(leave blank to keep)" autocomplete="off">
+          </label>
+          <label>New password
+            <input id="me-password" type="password" placeholder="(leave blank to keep)">
+          </label>
+        </div>
+        <div class="row">
+          <button id="me-save" class="btn btn-primary" type="button">Save my login details</button>
+          <span id="me-status" class="hint"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Camera modal -->
+<div id="camera-overlay" class="modal-overlay hidden">
+  <div class="modal modal-wide">
+    <div class="modal-head"><h3>📷 Take Photo — Batch Learner Upload</h3><button class="modal-x" type="button" id="cam-x">✕</button></div>
+    <div class="modal-body">
+      <video id="cam-video" autoplay playsinline muted></video>
+      <p id="cam-error" class="form-error hidden"></p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" type="button" id="cam-cancel">Cancel</button>
+      <button class="btn btn-primary btn-lg" type="button" id="cam-shutter">📷 Capture</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-root"></div>
+<div id="toast-root"></div>
+
+<script src="/js/constants.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/ui.js"></script>
+<script src="/js/collector.js"></script>
+<script src="/js/admin.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>
