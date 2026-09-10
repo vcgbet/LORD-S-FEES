@@ -33,6 +33,7 @@ const Collector = {
     // single-entry form
     ['f-department', 'f-class', 'f-learner'].forEach((id) => $( '#' + id).addEventListener('input', () => this.refreshLearnerMatch()));
     $('#f-submit').onclick = () => this.submitEntry();
+    $('#f-clear').onclick = () => { this.resetEntryForm(); toast('Form cleared', 'success'); };
     $('#success-another').onclick = () => this.resetEntryForm();
     $('#success-view').onclick = () => switchTab('#collector-tabs', 'c-submitted');
     $('#success-receipt').onclick = () => {
@@ -147,7 +148,7 @@ const Collector = {
     renderMediaState('f', this.entryMedia);
     this.updateFormTotal();
     $('#editing-banner').classList.add('hidden');
-    $('#f-submit').textContent = 'Submit to Administrator';
+    $('#f-submit').textContent = '✓ Submit & Generate Receipt';
     $('#entry-success').classList.add('hidden');
     $('#entry-form-card').classList.remove('hidden');
     this.refreshLearnerMatch();
