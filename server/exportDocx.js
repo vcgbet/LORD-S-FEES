@@ -6,7 +6,9 @@ const { FEE_ITEMS, FEE_KEYS } = require('./fees');
 const { reportSummary } = require('./exportPdf');
 
 const SCHOOL = "THE LORD'S GREAT ACADEMY";
-const DARK = '123B2A';
+const DARK = '16224E';
+const GOLD = 'C08A00';
+const ZEBRA = 'F2F5FB';
 
 function gh(n) {
   const v = Number(n) || 0;
@@ -71,15 +73,16 @@ async function reportDocx(entries, meta, res) {
     }),
   ];
   entries.forEach((e, i) => {
+    const z = i % 2 === 1 ? { fill: ZEBRA } : {};
     mainRows.push(new TableRow({
       children: [
-        cell(String(i + 1), { width: HEAD_W[0] }),
-        cell(fmtDate(e.date_of_payment), { width: HEAD_W[1] }),
-        cell(e.department, { width: HEAD_W[2] }),
-        cell(e.class, { width: HEAD_W[3] }),
-        cell(String(e.learner_name || '').toUpperCase(), { width: HEAD_W[4] }),
-        cell(String(e.payment_type || '').toUpperCase() === 'PART' ? 'PART' : 'FULL', { width: HEAD_W[5] }),
-        cell((Number(e.total) || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), { width: HEAD_W[6], align: 'right' }),
+        cell(String(i + 1), { width: HEAD_W[0], ...z }),
+        cell(fmtDate(e.date_of_payment), { width: HEAD_W[1], ...z }),
+        cell(e.department, { width: HEAD_W[2], ...z }),
+        cell(e.class, { width: HEAD_W[3], ...z }),
+        cell(String(e.learner_name || '').toUpperCase(), { width: HEAD_W[4], ...z }),
+        cell(String(e.payment_type || '').toUpperCase() === 'PART' ? 'PART' : 'FULL', { width: HEAD_W[5], ...z }),
+        cell((Number(e.total) || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), { width: HEAD_W[6], align: 'right', ...z }),
       ],
     }));
   });
@@ -103,7 +106,7 @@ async function reportDocx(entries, meta, res) {
     }));
   }
   feeRows.push(new TableRow({
-    children: [cell('GRAND TOTAL', { bold: true, width: 70, fill: 'EAF3EE' }), cell(sum.totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), { bold: true, width: 30, align: 'right', fill: 'EAF3EE' })],
+    children: [cell('GRAND TOTAL', { bold: true, width: 70, fill: DARK, color: 'FFFFFF' }), cell(sum.totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), { bold: true, width: 30, align: 'right', fill: DARK, color: 'FFFFFF' })],
   }));
 
   const doc = new Document({
@@ -113,17 +116,18 @@ async function reportDocx(entries, meta, res) {
     sections: [{
       properties: {},
       children: [
-        p(SCHOOL, { bold: true, size: 32, align: 'center', after: 40 }),
-        p('FEES COLLECTION REPORT', { bold: true, size: 26, align: 'center', after: 120 }),
+        p(SCHOOL, { bold: true, size: 32, align: 'center', color: DARK, after: 40 }),
+        p('FEES COLLECTION REPORT', { bold: true, size: 26, align: 'center', color: GOLD, after: 60 }),
+        p('Fees Collection & Management Portal  \u2022  P.O. Box 246, Kumasi \u2013 Ghana', { size: 18, align: 'center', color: '7A8299', after: 120 }),
         p(parts.length ? parts.join('    |    ') : 'All entries', { size: 20, align: 'center', color: '555555', after: 40 }),
         p('Generated: ' + new Date().toUTCString() + '     \u2022     Prepared by: ' + (meta.by || '\u2014'), { size: 20, align: 'center', color: '555555', after: 240 }),
-        p(`Entries: ${entries.length}    \u2022    Full Payments: ${sum.full}    \u2022    Part Payments: ${sum.part}    \u2022    Total Collected: ${gh(sum.totalAmount)}`, { bold: true, size: 22, after: 200 }),
+        p(`Entries: ${entries.length}    \u2022    Full Payments: ${sum.full}    \u2022    Part Payments: ${sum.part}    \u2022    Total Collected: ${gh(sum.totalAmount)}`, { bold: true, size: 22, color: DARK, after: 200 }),
         new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: mainRows }),
         p('', { after: 160 }),
-        p('FEE BREAKDOWN (TOTALS ACROSS ALL ENTRIES)', { bold: true, size: 24, after: 120 }),
+        p('FEE BREAKDOWN (TOTALS ACROSS ALL ENTRIES)', { bold: true, size: 24, color: DARK, after: 120 }),
         new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: feeRows }),
         p('', { after: 160 }),
-        p(`GRAND TOTAL: ${gh(sum.totalAmount)}`, { bold: true, size: 26, align: 'right', after: 360 }),
+        p(`GRAND TOTAL: ${gh(sum.totalAmount)}`, { bold: true, size: 26, align: 'right', color: DARK, after: 360 }),
         new Table({
           width: { size: 100, type: WidthType.PERCENTAGE },
           rows: [new TableRow({
