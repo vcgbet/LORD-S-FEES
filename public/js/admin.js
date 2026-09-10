@@ -208,7 +208,7 @@ const Admin = {
       .reduce((s, e) => s + (Number(e.total) || 0), 0);
 
     $('#a-stats').innerHTML = `
-      <div class="stat-card gold"><div class="k">Total Collected</div><div class="v">${gh(total)}</div></div>
+      <div class="stat-card gold hero"><div class="k">Total Revenue Collected</div><div class="v">${gh(total)}</div><div class="k" style="margin-top:4px">From ${entries.length} Receipt${entries.length === 1 ? '' : 's'}</div></div>
       <div class="stat-card"><div class="k">Entries</div><div class="v">${entries.length}</div></div>
       <div class="stat-card"><div class="k">Full Payments</div><div class="v">${full}</div></div>
       <div class="stat-card"><div class="k">Part Payments</div><div class="v">${entries.length - full}</div></div>
